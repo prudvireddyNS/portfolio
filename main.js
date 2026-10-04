@@ -13,17 +13,9 @@ const smooth = (t) => t * t * (3 - 2 * t);
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-/* One palette per section: the whole page (3D fog, lights, CSS accents) lerps between them as you scroll. */
-const PAL = [
-  { bg: '#0a0612', a: '#ff7a59', b: '#ff3d8b', c: '#ffc857' }, // hero      · sunrise on indigo
-  { bg: '#05131a', a: '#4df0c6', b: '#4da3ff', c: '#e7fff8' }, // about     · mint / aqua
-  { bg: '#0a1406', a: '#b8ff3d', b: '#25e08a', c: '#f5ffd6' }, // now       · battery green
-  { bg: '#15060c', a: '#ff5470', b: '#ffb347', c: '#ffd9de' }, // before    · alert red / amber
-  { bg: '#060b1f', a: '#6ea8ff', b: '#b86bff', c: '#d8e6ff' }, // built     · blue / violet
-  { bg: '#14061f', a: '#ff4de1', b: '#4dd8ff', c: '#ffe3fa' }, // lab       · magenta / cyan
-  { bg: '#06101c', a: '#ffd43b', b: '#4b8bbe', c: '#fff6cf' }, // tools     · python yellow / blue
-  { bg: '#0a0612', a: '#ff7a59', b: '#ff3d8b', c: '#ffc857' }, // contact   · back to sunrise
-].map((p) => Object.fromEntries(Object.entries(p).map(([k, v]) => [k, new THREE.Color(v)])));
+/* One palette for the whole page: 3D fog, lights and CSS accents all share it. */
+const PALETTE = { bg: '#0a0612', a: '#ff7a59', b: '#e0a07a', c: '#f1dccb' };
+const PAL = Array.from({ length: 8 }, () => Object.fromEntries(Object.entries(PALETTE).map(([k, v]) => [k, new THREE.Color(v)])));
 
 /* ------------------------------------------------------------ smooth scroll */
 
@@ -95,12 +87,27 @@ function initUI() {
   // rotating hero word
   const words = ['websites', 'mobile apps', 'desktop apps', 'AI agents', 'scrapers', '3D worlds', 'whatever\'s next'];
   const swap = $('#swap');
+  const swapIn = document.createElement('span'); swapIn.className = 'swap-in';
+  swapIn.textContent = swap.textContent; swap.textContent = ''; swap.appendChild(swapIn);
+  // reserve the widest word so the headline never reflows while it rotates
+  const sizeSwap = () => {
+    const cur = swapIn.textContent; let w = 0;
+    words.forEach((t) => { swapIn.textContent = t; w = Math.max(w, swapIn.getBoundingClientRect().width); });
+    swapIn.textContent = cur; swap.style.minWidth = `min(${Math.ceil(w)}px, 100%)`;
+  };
+  sizeSwap();
+  (document.fonts?.ready || Promise.resolve()).then(sizeSwap);
+  addEventListener('resize', sizeSwap);
   let wi = 0;
   if (!reduceMotion) {
+    const next = () => { wi = (wi + 1) % words.length; swapIn.textContent = words[wi]; swap.classList.remove('out'); };
     setInterval(() => {
+      let done = false;
+      const fin = () => { if (done) return; done = true; next(); };
+      swapIn.addEventListener('transitionend', (e) => { if (e.propertyName === 'opacity') fin(); }, { once: true });
+      setTimeout(fin, 450); // fallback if transitionend never fires
       swap.classList.add('out');
-      setTimeout(() => { wi = (wi + 1) % words.length; swap.textContent = words[wi]; swap.classList.remove('out'); }, 320);
-    }, 2400);
+    }, 3000);
   }
 
   // progress bar
@@ -231,7 +238,7 @@ function initUI() {
       const qy = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
       el.addEventListener('pointermove', (e) => {
         const r = el.getBoundingClientRect();
-        qx((e.clientX - (r.left + r.width / 2)) * .32); qy((e.clientY - (r.top + r.height / 2)) * .4);
+        qx((e.clientX - (r.left + r.width / 2)) * .16); qy((e.clientY - (r.top + r.height / 2)) * .2);
       });
       el.addEventListener('pointerleave', () => { qx(0); qy(0); });
     });
@@ -240,7 +247,7 @@ function initUI() {
       el.addEventListener('pointermove', (e) => {
         const r = el.getBoundingClientRect();
         const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-        gsap.to(el, { rotationY: (px - .5) * 12, rotationX: (.5 - py) * 10, transformPerspective: 900, duration: .5, ease: 'power3', overwrite: 'auto' });
+        gsap.to(el, { rotationY: (px - .5) * 6, rotationX: (.5 - py) * 6, transformPerspective: 900, duration: .5, ease: 'power3', overwrite: 'auto' });
         el.style.setProperty('--gx', (px * 100) + '%'); el.style.setProperty('--gy', (py * 100) + '%'); el.style.setProperty('--go', 1);
       });
       el.addEventListener('pointerleave', () => {
@@ -253,7 +260,7 @@ function initUI() {
   /* entrance animations — started once the loader is gone */
   const enter = () => {
     if (!gsap || !ScrollTrigger || reduceMotion) {
-      $$('.reveal').forEach((e) => { e.style.opacity = 1; e.style.transform = 'none'; e.style.filter = 'none'; });
+      $$('.reveal').forEach((e) => { e.style.opacity = 1; e.style.transform = 'none'; });
       $$('[data-split]').forEach((e) => splitText(e));
       $$('[data-count]').forEach(count); typeTerminal(); startSoc(); setSoc(87); pbars.classList.add('in');
       return;
@@ -267,10 +274,10 @@ function initUI() {
       else ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: play });
     });
     // everything else fades up in batches
-    gsap.set('.reveal', { opacity: 0, y: 34, filter: 'blur(8px)' });
+    gsap.set('.reveal', { opacity: 0, y: 12 });
     ScrollTrigger.batch('.reveal', {
       start: 'top 90%', once: true,
-      onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.1, ease: 'power3.out', stagger: .09, onComplete: () => gsap.set(batch, { filter: 'none' }) }),
+      onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: .9, ease: 'power2.out', stagger: .08 }),
     });
     // scroll-linked flourishes
     $$('.eyebrow').forEach((el) => gsap.fromTo(el, { letterSpacing: '.5em' }, { letterSpacing: '.16em', ease: 'none', scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 55%', scrub: true } }));
@@ -311,8 +318,8 @@ async function initScene() {
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 600);
   scene.add(camera);
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-  const lightA = new THREE.PointLight(0xffffff, 70, 44); lightA.position.set(4, 3, 2);
-  const lightB = new THREE.PointLight(0xffffff, 70, 44); lightB.position.set(-4, -2, 2);
+  const lightA = new THREE.PointLight(0xffffff, 40, 44); lightA.position.set(4, 3, 2);
+  const lightB = new THREE.PointLight(0xffffff, 40, 44); lightB.position.set(-4, -2, 2);
   camera.add(lightA, lightB);
 
   /* post: bloom (best effort — falls back to a plain render) */
@@ -328,7 +335,7 @@ async function initScene() {
     const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: mobile ? 0 : 4 });
     composer = new EffectComposer(renderer, rt);
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.6, 0.5, 0.3);
+    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.2, 0.4, 0.4);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   } catch (err) { composer = null; }
@@ -418,7 +425,7 @@ async function initScene() {
   // 1 · about: gyroscope
   {
     const P = PAL[1], group = new THREE.Group();
-    const mats = [P.a, P.b, P.c].map((c) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: .7, roughness: .3, metalness: .7 }));
+    const mats = [P.a, P.b, P.c].map((c) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: .45, roughness: .3, metalness: .7 }));
     const rings = [3.6, 2.8, 2.0].map((r, i) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, .09, 16, 120), mats[i]); group.add(m); return m; });
     const core = new THREE.Mesh(new THREE.IcosahedronGeometry(.9, 1), new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, roughness: .2, metalness: .8, emissive: P.a, emissiveIntensity: .45 }));
     group.add(core);
@@ -436,7 +443,7 @@ async function initScene() {
     const cells = new THREE.InstancedMesh(new THREE.CylinderGeometry(.42, .42, 1.9, 24), new THREE.MeshStandardMaterial({ roughness: .35, metalness: .55 }), cols * rows);
     const caps = new THREE.InstancedMesh(new THREE.CylinderGeometry(.16, .16, .12, 12), new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: .9, roughness: .25 }), cols * rows);
     const dummy = new THREE.Object3D(), color = new THREE.Color();
-    const low = new THREE.Color(0xff4d3d), high = P.a;
+    const low = new THREE.Color(0x5a3a3a), high = P.a;
     const group = new THREE.Group(); group.add(cells, caps);
     group.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(cols + .6, 2.4, rows + .6)), new THREE.LineBasicMaterial({ color: P.b, transparent: true, opacity: .6 })));
     group.rotation.set(.55, -.5, 0);
@@ -491,7 +498,7 @@ async function initScene() {
   {
     const P = PAL[5], group = new THREE.Group();
     const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(2.4, .62, 260, 36, 2, 3), new THREE.MeshBasicMaterial({ color: P.b, wireframe: true, transparent: true, opacity: .6 }));
-    const inner = new THREE.Mesh(new THREE.TorusKnotGeometry(2.4, .3, 200, 20, 2, 3), new THREE.MeshStandardMaterial({ color: P.a, emissive: P.a, emissiveIntensity: .8, roughness: .3, metalness: .6 }));
+    const inner = new THREE.Mesh(new THREE.TorusKnotGeometry(2.4, .3, 200, 20, 2, 3), new THREE.MeshStandardMaterial({ color: P.a, emissive: P.a, emissiveIntensity: .4, roughness: .3, metalness: .6 }));
     group.add(knot, inner);
     station(5, group, (t, dt) => { group.rotation.y += dt * .3; group.rotation.x = Math.sin(t * .4) * .4; inner.scale.setScalar(1 + Math.sin(t * 2) * .04); });
   }
@@ -500,10 +507,10 @@ async function initScene() {
   {
     const P = PAL[6], group = new THREE.Group();
     const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5, 2), new THREE.MeshBasicMaterial({ color: P.a, wireframe: true, transparent: true, opacity: .55 })); group.add(core);
-    const heart = new THREE.Mesh(new THREE.IcosahedronGeometry(.8, 1), new THREE.MeshStandardMaterial({ color: P.a, emissive: P.a, emissiveIntensity: .9, flatShading: true })); group.add(heart);
+    const heart = new THREE.Mesh(new THREE.IcosahedronGeometry(.8, 1), new THREE.MeshStandardMaterial({ color: P.a, emissive: P.a, emissiveIntensity: .45, flatShading: true })); group.add(heart);
     const orbit = new THREE.Group();
     const sats = Array.from({ length: 8 }, (_, i) => {
-      const m = new THREE.Mesh(new THREE.OctahedronGeometry(.28, 0), new THREE.MeshStandardMaterial({ color: i % 2 ? P.b : P.c, emissive: i % 2 ? P.b : P.c, emissiveIntensity: .8 }));
+      const m = new THREE.Mesh(new THREE.OctahedronGeometry(.28, 0), new THREE.MeshStandardMaterial({ color: i % 2 ? P.b : P.c, emissive: i % 2 ? P.b : P.c, emissiveIntensity: .4 }));
       const a = (i / 8) * Math.PI * 2; m.position.set(Math.cos(a) * 4.8, Math.sin(i * 1.3) * 1.3, Math.sin(a) * 4.8); orbit.add(m); return m;
     });
     const ring = new THREE.Mesh(new THREE.TorusGeometry(4.8, .014, 6, 180), new THREE.MeshBasicMaterial({ color: P.b, transparent: true, opacity: .45 })); ring.rotation.x = Math.PI / 2; orbit.add(ring);
@@ -522,13 +529,13 @@ async function initScene() {
     group.rotation.x = .2;
     station(7, group, (t, dt) => {
       core.rotation.y += dt * .25; wire.rotation.y -= dt * .15; wire.rotation.x += dt * .1;
-      waves.forEach((w, i) => { const p = (t * .35 + i / 3) % 1; w.scale.setScalar(2.6 + p * 6.5); w.material.opacity = (1 - p) * (mobile ? .3 : .55); });
+      waves.forEach((w, i) => { const p = (t * .35 + i / 3) % 1; w.scale.setScalar(2.6 + p * 6.5); w.material.opacity = (1 - p) * (mobile ? .16 : .24); });
     });
   }
 
   /* ---- layout ---- */
   let vw = 1, vh = 1, centers = [];
-  const baseBloom = () => (mobile ? .45 : .6);
+  const baseBloom = () => (mobile ? .15 : .2);
   function measure() {
     vw = innerWidth; vh = innerHeight; mobile = mobileQuery();
     const dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);
@@ -552,24 +559,11 @@ async function initScene() {
     return N - 1;
   };
 
-  /* ---- palette journey ---- */
-  const cur = { bg: new THREE.Color(), a: new THREE.Color(), b: new THREE.Color(), c: new THREE.Color() };
-  const root = document.documentElement.style;
-  let lastCss = '', cssTick = 0;
-  function applyPalette(f) {
-    const i = clamp(Math.floor(f), 0, N - 2), t = smooth(clamp((f - i - .2) / .6, 0, 1));
-    for (const k in cur) cur[k].copy(PAL[i][k]).lerp(PAL[i + 1][k], t);
-    scene.fog.color.copy(cur.bg); renderer.setClearColor(cur.bg);
-    lightA.color.copy(cur.a); lightB.color.copy(cur.b);
-    dustMat.color.copy(cur.c).lerp(cur.a, .35);
-    if ((cssTick++ % 3) === 0) {
-      const css = cur.a.getStyle() + cur.b.getStyle() + cur.bg.getStyle();
-      if (css !== lastCss) {
-        lastCss = css;
-        root.setProperty('--accent', cur.a.getStyle()); root.setProperty('--accent2', cur.b.getStyle()); root.setProperty('--bg', cur.bg.getStyle());
-      }
-    }
-  }
+  /* ---- palette: one fixed palette, applied once ---- */
+  const P0 = PAL[0];
+  scene.fog.color.copy(P0.bg); renderer.setClearColor(P0.bg);
+  lightA.color.copy(P0.a); lightB.color.copy(P0.b);
+  dustMat.color.copy(P0.c).lerp(P0.a, .35);
 
   /* ---- loop ---- */
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
@@ -590,20 +584,17 @@ async function initScene() {
     f += (stationFloat() - f) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 9));
     mouse.sx += (mouse.x - mouse.sx) * (1 - Math.exp(-dt * 3)); mouse.sy += (mouse.y - mouse.sy) * (1 - Math.exp(-dt * 3));
 
-    applyPalette(f);
     curve.getPoint(clamp(f / (N - 1), 0, 1), pos);
     const intro = smooth(state.intro);
     camera.position.copy(pos); camera.position.z += (1 - intro) * 30;
     camera.position.x += mouse.sx * .6; camera.position.y += -mouse.sy * .4;
     look.set(pos.x + mouse.sx * 1.4, pos.y - mouse.sy * .9, pos.z - 14); camera.lookAt(look);
-    camera.rotation.z += Math.sin(time * .25) * .006 + clamp(vel / 6000, -.02, .02);
-    const kick = clamp(Math.abs(vel) / 2600, 0, 1) * 14;
-    fov += ((55 + kick + (1 - intro) * 18) - fov) * (1 - Math.exp(-dt * 6));
+    fov += ((55 + (1 - intro) * 18) - fov) * (1 - Math.exp(-dt * 6));
     if (Math.abs(camera.fov - fov) > .01) { camera.fov = fov; camera.updateProjectionMatrix(); }
 
     heroU.uTime.value = time; heroU.uScatter.value = Math.pow(1 - intro, 2);
     heroU.uPulse.value = Math.max(0, 1 - Math.abs(f)) * (.5 + .5 * Math.sin(time * 1.5)) * .6;
-    if (bloom) bloom.strength = baseBloom() + (1 - intro) * 1.1 + clamp(Math.abs(vel) / 3000, 0, 1) * .35;
+    if (bloom) bloom.strength = baseBloom() + (1 - intro) * .25;
 
     const da = reduceMotion ? 0 : dt;
     stations.forEach((st, i) => {
