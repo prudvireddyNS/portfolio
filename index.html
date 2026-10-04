@@ -3,129 +3,258 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Prudvi Kumar Reddy</title>
-<meta name="description" content="Prudvi Kumar Reddy is a solo software developer in Bengaluru. He writes mostly Python, works with AI tools every day, and currently builds battery monitoring software at Xbattery.">
-<meta name="theme-color" content="#e8ece7">
-<meta property="og:title" content="Prudvi Kumar Reddy">
-<meta property="og:description" content="Solo developer in Bengaluru. Python, AI tools, and a habit of shipping.">
-<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<title>Prudvi — I build things</title>
+<meta name="description" content="Prudvi Kumar Reddy — solo builder from Bengaluru. Python-native, AI-assisted, curious about everything. Websites, apps, agents, 3D worlds.">
+<meta name="theme-color" content="#0a0612">
+<meta property="og:title" content="Prudvi — I build things">
+<meta property="og:description" content="Solo builder. Python-native. AI-assisted. Websites, apps, agents, 3D worlds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/lenis.css">
 <link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__ready)document.documentElement.classList.remove('js')},6000)</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><span></span></div>
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-count"><b id="loadNum">0</b><small>%</small></div>
+  <div class="loader-bar"><i id="loadBar"></i></div>
+</div>
 
 <header class="top">
-  <a class="name" href="#top">Prudvi Kumar Reddy</a>
-  <nav aria-label="Sections">
-    <a href="#work">Work</a>
-    <a href="#history">Where I've been</a>
-    <a href="#contact">Contact</a>
-  </nav>
+  <a class="logo" href="#hero" aria-label="Home">prudvi<span>_</span></a>
+  <a class="top-cta magnetic" href="#contact">say hi →</a>
 </header>
+<nav class="dots" id="dots" aria-label="Sections"></nav>
 
-<main id="top">
+<main id="main">
 
-  <section class="hero">
-    <h1>I build software by myself, mostly&nbsp;in&nbsp;Python, and I&nbsp;finish&nbsp;it.</h1>
-    <div class="hero-body">
-      <p class="intro">I'm Prudvi, a developer in Bengaluru. Right now I write software that watches over battery packs at Xbattery. Before that I was the founding engineer at a start-up that hunts scams on Telegram. I like problems I haven't seen before, because the first hour is the only hour when nobody, including me, knows the answer.</p>
-      <p class="clock">It's <time id="clock">—</time> for me in Bengaluru.</p>
+  <!-- 0 · HERO -->
+  <section id="hero" data-label="Hello" class="center">
+    <div class="wrap w-wide">
+      <p class="eyebrow reveal">Bengaluru · solo developer · AI-native</p>
+      <h1 data-split>Hi, I'm <span class="grad">Prudvi.</span></h1>
+      <h1 class="h1b"><span class="pre" data-split>I build</span> <span class="swap" id="swap" aria-live="polite">websites</span></h1>
+      <p class="lede reveal">Python native. AI powered. Shipped anyway.</p>
+      <div class="cta reveal">
+        <a class="btn magnetic" href="#built"><span>See what I've built</span></a>
+        <a class="btn ghost magnetic" href="#contact"><span>Get in touch</span></a>
+      </div>
     </div>
+    <div class="scroll-cue" aria-hidden="true"><span></span>scroll to fly</div>
   </section>
 
-  <section id="work" class="block">
-    <h2>Things I've shipped</h2>
-    <ul class="work">
-      <li>
-        <a href="https://readekloge.com" target="_blank" rel="noopener">
-          <span class="work-name">Ekloge</span>
-          <span class="work-desc">A daily AI news site. It collects from X, Reddit, Hacker News, Product Hunt and GitHub, picks what matters, and publishes without me touching it.</span>
-          <span class="work-where">readekloge.com ↗</span>
-        </a>
-      </li>
-      <li>
-        <a href="https://github.com/prudvireddyNS" target="_blank" rel="noopener">
-          <span class="work-name">VyzeAI</span>
-          <span class="work-desc">An open-source Python framework for agents that call tools. Small, readable, and built to be extended.</span>
-          <span class="work-where">On GitHub ↗</span>
-        </a>
-      </li>
-      <li>
-        <div class="static">
-          <span class="work-name">Budget tracker</span>
-          <span class="work-desc">A money app I made for myself and still open every day. It's private, so there's nothing to link to.</span>
-          <span class="work-where">Daily use</span>
+  <!-- 1 · ABOUT -->
+  <section id="about" data-label="Me" class="left">
+    <div class="wrap w-mid">
+      <p class="eyebrow reveal">01 — who</p>
+      <h2 data-split>New problem? <span class="grad">Even better.</span></h2>
+
+      <div class="bento b-about">
+        <div class="tile term reveal" id="terminal">
+          <div class="chrome"><i></i><i></i><i></i><span>python3</span></div>
+          <pre class="code" id="termOut" aria-label="Python is the language I actually know; I shipped TypeScript, Next.js, React, C# and Flutter anyway."></pre>
         </div>
-      </li>
-    </ul>
-  </section>
 
-  <section id="history" class="block">
-    <h2>Where I've been</h2>
+        <div class="tile reveal">
+          <h3 class="tile-h">Ships on</h3>
+          <ul class="status">
+            <li><i></i>Azure Functions</li>
+            <li><i></i>IoT Hub</li>
+            <li><i></i>Virtual machines</li>
+            <li><i></i>Docker</li>
+            <li><i></i>Proxies</li>
+          </ul>
+          <p class="tile-note">still running. no downtime.</p>
+        </div>
 
-    <article class="job">
-      <p class="when">Aug 2026 to now</p>
-      <div class="job-body">
-        <h3>Xbattery</h3>
-        <p>I build software that monitors and controls battery management systems. The details stay private, but the job is simple to say: know what every cell is doing, and say so before it matters.</p>
+        <div class="tile reveal">
+          <h3 class="tile-h">Builds for</h3>
+          <div class="icons">
+            <div><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Websites</div>
+            <div><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>Mobile</div>
+            <div><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg>Desktop</div>
+            <div><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9.5 4.25 4.25 0 0 1 17.5 18z"/></svg>Cloud</div>
+            <div><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>IoT</div>
+          </div>
+        </div>
       </div>
-    </article>
-
-    <article class="job">
-      <p class="when">Dec 2025 to Jul 2026</p>
-      <div class="job-body">
-        <h3>TruFides AI, founding engineer</h3>
-        <p>A fraud-detection product, from the first line of code. Some of what I built:</p>
-        <ul>
-          <li>Watched more than 100 Telegram channels for scams, fraud and illegal gambling.</li>
-          <li>Scraped over 200 sites, collecting about 10,000 UPI payment details a day.</li>
-          <li>Wrote my own rotating proxy system, which cut proxy costs by 95%.</li>
-          <li>Built a customer-support agent with memory, using the Claude Agent SDK. It works inside Freshdesk and Gorgias and can edit orders live.</li>
-        </ul>
-      </div>
-    </article>
-
-    <article class="job">
-      <p class="when">2025</p>
-      <div class="job-body">
-        <h3>Research at NITK</h3>
-        <p>Question answering for Hindi tourism, using BERT with IndicBART, written up for FIRE 2025. It reached 57.6% exact match and an F1 of 0.91.</p>
-      </div>
-    </article>
-
-    <article class="job">
-      <p class="when">Before that</p>
-      <div class="job-body">
-        <h3>Mohan Babu University</h3>
-        <p>B.Tech in Computer Science and Data Science, CGPA 9.38.</p>
-      </div>
-    </article>
-  </section>
-
-  <section id="how" class="block side">
-    <h2>How I work</h2>
-    <div>
-      <p>Python is the language I know best. I've shipped TypeScript, Next.js, React, C# and Flutter anyway, because the product usually matters more than the language. Most of it ends up on Azure Functions, IoT Hub, plain virtual machines or Docker, and it stays up.</p>
-      <p>AI tools are open all day: Claude, Codex, pi, opencode, hermes, openclaw, Kimi and DeepSeek. I use them the way a carpenter uses a power saw. They're faster, and I still have to know where the line goes.</p>
     </div>
   </section>
 
-  <section class="block side">
-    <h2>On the side</h2>
-    <div>
-      <p>I spend evenings breaking things on purpose: image and video generation, swapping characters in footage, driving Blender from Claude to make 3D scenes, and building worlds in three.js.</p>
-      <p>The first version of this site was one of those experiments. This one is quieter.</p>
+  <!-- 2 · NOW -->
+  <section id="now" data-label="Now" class="right">
+    <div class="wrap w-narrow">
+      <p class="eyebrow reveal">02 — now</p>
+      <h2 data-split>Keeping batteries <span class="grad">honest.</span></h2>
+      <div class="role reveal"><b>Xbattery</b><em>Aug 2026 — present</em></div>
+      <p class="lede sm reveal">Software that monitors and controls battery management systems.</p>
+
+      <div class="tile telemetry reveal">
+        <div class="ring">
+          <svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52"/><circle class="val" id="ringVal" cx="60" cy="60" r="52"/></svg>
+          <div class="ring-n"><b id="ringNum">87</b><small>%</small></div>
+        </div>
+        <div class="bars" id="cellBars"></div>
+        <p class="tile-note">illustrative telemetry — the real thing stays private</p>
+      </div>
     </div>
   </section>
 
-  <section id="contact" class="contact">
-    <h2>Got something nobody has built yet?</h2>
-    <p class="mail"><a href="mailto:prudvisneha2003@gmail.com">prudvisneha2003@gmail.com</a></p>
-    <p class="elsewhere">Also on <a href="https://github.com/prudvireddyNS" target="_blank" rel="noopener">GitHub</a> and <a href="https://linkedin.com/in/ns-prudhvi-kumar-reddy-2832bb272" target="_blank" rel="noopener">LinkedIn</a>.</p>
+  <!-- 3 · BEFORE -->
+  <section id="before" data-label="Before" class="left">
+    <div class="wrap w-mid">
+      <p class="eyebrow reveal">03 — before</p>
+      <h2 data-split>Founding engineer. <span class="grad">Fraud hunter.</span></h2>
+      <div class="role reveal"><b>TruFides AI</b><em>Dec 2025 — Jul 2026</em></div>
+
+      <div class="bento b-before">
+        <div class="tile radar-tile reveal">
+          <div class="radar" aria-hidden="true"><i style="--x:30%;--y:34%;--d:.2s"></i><i style="--x:68%;--y:26%;--d:1.1s"></i><i style="--x:58%;--y:64%;--d:2s"></i><i style="--x:24%;--y:70%;--d:2.8s"></i><i style="--x:78%;--y:56%;--d:3.4s"></i></div>
+          <div class="big"><strong data-count="100" data-suffix="+">0</strong><span>Telegram channels watched for scam, fraud &amp; illegal gambling</span></div>
+        </div>
+
+        <div class="tile scrape-tile reveal">
+          <div class="scr" id="scr" aria-hidden="true"></div>
+          <div class="big"><strong data-count="200" data-suffix="+">0</strong><span>sites scraped · ~10,000 UPI payment details a day</span></div>
+        </div>
+
+        <div class="tile proxy-tile reveal">
+          <div class="pbars" id="pbars" aria-hidden="true"></div>
+          <div class="big"><strong data-count="95" data-prefix="−" data-suffix="%">0</strong><span>proxy cost, with my own rotating proxy system</span></div>
+        </div>
+
+        <div class="tile chat-tile reveal">
+          <div class="chat" aria-hidden="true">
+            <div class="msg them m1">Where's my order?</div>
+            <div class="msg typing"><i></i><i></i><i></i></div>
+            <div class="msg me m2">Out for delivery ✓</div>
+          </div>
+          <div class="big"><strong class="txt">Support agent</strong><span>memory-enabled · Claude Agent SDK · Freshdesk &amp; Gorgias · edits orders live</span></div>
+        </div>
+
+        <div class="tile nitk-tile reveal">
+          <div class="nitk"><div><strong data-count="57.6" data-suffix="%" data-dec="1">0</strong><span>exact match</span></div><div><strong data-count="0.91" data-dec="2">0</strong><span>F1</span></div></div>
+          <div class="big"><strong class="txt">NITK research</strong><span>Hindi tourism Q&amp;A · BERT–IndicBART · FIRE 2025</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · BUILT -->
+  <section id="built" data-label="Built" class="center">
+    <div class="wrap w-wide">
+      <p class="eyebrow reveal">04 — shipped</p>
+      <h2 data-split>Things I built and <span class="grad">let loose.</span></h2>
+
+      <div class="showcase">
+        <a class="proj tilt reveal" href="https://readekloge.com" target="_blank" rel="noopener" data-cursor="open ↗">
+          <div class="mock browser">
+            <div class="chrome"><i></i><i></i><i></i><span>readekloge.com</span></div>
+            <div class="feed">
+              <div class="src"><b>X</b><b>Reddit</b><b>HN</b><b>PH</b><b>GitHub</b></div>
+              <div class="scroller"><div class="rows">
+                <p><i></i><span style="--w:88%"></span></p><p><i></i><span style="--w:64%"></span></p><p><i></i><span style="--w:76%"></span></p><p><i></i><span style="--w:92%"></span></p><p><i></i><span style="--w:58%"></span></p><p><i></i><span style="--w:80%"></span></p>
+                <p><i></i><span style="--w:88%"></span></p><p><i></i><span style="--w:64%"></span></p><p><i></i><span style="--w:76%"></span></p><p><i></i><span style="--w:92%"></span></p><p><i></i><span style="--w:58%"></span></p><p><i></i><span style="--w:80%"></span></p>
+              </div></div>
+            </div>
+          </div>
+          <div class="meta"><span class="tag">live</span><h3>Ekloge</h3><p>Daily AI news, curated and published on autopilot.</p><span class="go">readekloge.com ↗</span></div>
+        </a>
+
+        <a class="proj tilt reveal" href="https://github.com/prudvireddyNS" target="_blank" rel="noopener" data-cursor="open ↗">
+          <div class="mock terminal">
+            <div class="chrome"><i></i><i></i><i></i><span>vyzeai</span></div>
+            <pre class="code run"><span class="l" style="--i:0"><em>agent</em> = Agent(tools=[search, calc])</span>
+<span class="l" style="--i:1"><em>agent</em>.run("plan my trip")</span>
+<span class="l dim" style="--i:2">→ tool · search("flights")</span>
+<span class="l dim" style="--i:3">→ tool · calc(budget)</span>
+<span class="l ok" style="--i:4">✓ done</span></pre>
+          </div>
+          <div class="meta"><span class="tag">open source</span><h3>VyzeAI</h3><p>A Python framework for tool-using LLM agents.</p><span class="go">github ↗</span></div>
+        </a>
+
+        <div class="proj tilt reveal">
+          <div class="mock phone-wrap">
+            <div class="phone">
+              <div class="notch"></div>
+              <svg class="donut" viewBox="0 0 100 100">
+                <circle class="d0" cx="50" cy="50" r="34" pathLength="100"/>
+                <circle class="d1" cx="50" cy="50" r="34" pathLength="100"/>
+                <circle class="d2" cx="50" cy="50" r="34" pathLength="100"/>
+              </svg>
+              <div class="cats"><p><i></i><span style="--w:78%"></span></p><p><i></i><span style="--w:52%"></span></p><p><i></i><span style="--w:34%"></span></p></div>
+            </div>
+          </div>
+          <div class="meta"><span class="tag">daily driver</span><h3>Budget tracker</h3><p>A money app that works the way my head does.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · LAB -->
+  <section id="lab" data-label="Lab" class="center">
+    <div class="wrap w-wide head">
+      <p class="eyebrow reveal">05 — play</p>
+      <h2 data-split>The lab. <span class="grad">I break things for fun.</span></h2>
+    </div>
+    <div class="marquee lab-m" data-speed="40" data-dir="1" aria-label="Experiments">
+      <div class="track">
+        <!-- tiles repeated by JS -->
+        <div class="lt"><div class="art a-img"></div><span>Image generation</span></div>
+        <div class="lt"><div class="art a-vid"><i></i><i></i><i></i><i></i></div><span>Video generation</span></div>
+        <div class="lt"><div class="art a-swap"><i></i><i></i></div><span>Character replacement</span></div>
+        <div class="lt"><div class="art a-cube"><b></b><b></b><b></b><b></b><b></b><b></b></div><span>Claude × Blender 3D</span></div>
+        <div class="lt"><div class="art a-ring"><i></i><i></i><i></i></div><span>three.js worlds</span></div>
+      </div>
+    </div>
+    <p class="lede sm center-note reveal">You're inside the last one right now.</p>
+  </section>
+
+  <!-- 6 · TOOLS -->
+  <section id="tools" data-label="Tools" class="center">
+    <div class="wrap w-wide head">
+      <p class="eyebrow reveal">06 — toolbelt</p>
+      <h2 data-split>AI, <span class="grad">all day.</span></h2>
+    </div>
+    <div class="marquee big-m" data-speed="70" data-dir="-1" aria-label="AI tools I use">
+      <div class="track"><span>Claude</span><b>✦</b><span>Codex</span><b>✦</b><span>pi</span><b>✦</b><span>opencode</span><b>✦</b><span>hermes</span><b>✦</b><span>openclaw</span><b>✦</b><span>Kimi</span><b>✦</b><span>DeepSeek</span><b>✦</b></div>
+    </div>
+    <div class="marquee mono-m" data-speed="45" data-dir="1" aria-label="Stack">
+      <div class="track"><span>Python</span><b>/</b><span>TypeScript</span><b>/</b><span>Next.js</span><b>/</b><span>React</span><b>/</b><span>C#</span><b>/</b><span>Flutter</span><b>/</b><span>FastAPI</span><b>/</b><span>Azure</span><b>/</b><span>Docker</span><b>/</b><span>Playwright</span><b>/</b><span>PostgreSQL</span><b>/</b></div>
+    </div>
+  </section>
+
+  <!-- 7 · CONTACT -->
+  <section id="contact" data-label="Contact" class="center">
+    <div class="wrap w-wide">
+      <p class="eyebrow reveal">07 — hello</p>
+      <h2 class="big" data-split>Got something nobody's <span class="grad">built yet?</span></h2>
+      <p class="lede reveal">That's my favourite kind.</p>
+      <div class="cta reveal">
+        <a class="btn lg magnetic" href="mailto:prudvisneha2003@gmail.com"><span>prudvisneha2003@gmail.com</span></a>
+      </div>
+      <div class="links reveal">
+        <a class="magnetic" href="https://github.com/prudvireddyNS" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="magnetic" href="https://linkedin.com/in/ns-prudhvi-kumar-reddy-2832bb272" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="magnetic" href="https://readekloge.com" target="_blank" rel="noopener">Ekloge ↗</a>
+      </div>
+      <p class="foot">B.Tech CSE &amp; Data Science · Mohan Babu University · CGPA 9.38<br>Built with three.js, a lot of AI, and no build step.</p>
+    </div>
   </section>
 
 </main>
 
-<script src="main.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
